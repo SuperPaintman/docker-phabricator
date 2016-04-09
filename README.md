@@ -1,5 +1,9 @@
 # Docker Phabricator
+
+[![Image Layers][imagelayers-image]][imagelayers-url]
+
 [Docker][docker-url] image for [Phabricator][phabricator-url]
+
 
 ## Usage with docker-compose
 
@@ -129,3 +133,5 @@ server {
 
 [docker-url]: //www.docker.com/
 [phabricator-url]: //phabricator.org/
+[imagelayers-image]: //badge.imagelayers.io/superpaintman/phabricator:latest.svg
+[imagelayers-url]: //imagelayers.io/?images=superpaintman%2Fphabricator:latest

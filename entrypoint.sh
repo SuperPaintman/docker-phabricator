@@ -1,9 +1,10 @@
 #!/bin/bash
-set -e
 
 #
 # Author:       SuperPaintman <SuperPaintmanDeveloper@gmail.com>
 #
+
+set -e
 
 ###
 # Constants

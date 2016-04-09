@@ -115,5 +115,17 @@ server {
 }
 ```
 
+--------------------------------------------------------------------------------
+
+## Configuring
+### Environment variables
+|Env                    |Config key          |Comment|Default      |
+|-----------------------|--------------------|-------|-------------|
+|**PHABRICATOR_BASEURI**|phabricator.base-uri|       |*null*       |
+|**PHABRICATOR_DB_HOST**|mysql.host          |       |*"localhost"*|
+|**PHABRICATOR_DB_PORT**|mysql.port          |       |*"3306"*     |
+|**PHABRICATOR_DB_USER**|mysql.user          |       |*"root"*     |
+|**PHABRICATOR_DB_PASS**|mysql.pass          |       |*""*         |
+
 [docker-url]: //www.docker.com/
 [phabricator-url]: //phabricator.org/

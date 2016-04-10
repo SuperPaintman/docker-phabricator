@@ -23,12 +23,18 @@ services:
     ports:
       - "222:22"
       # - "9000:9000"
+    volumes:
+      - /apps/phabricator/phabricator:/var/www/phabricator
+      - /apps/phabricator/files:/var/www/files
+      - /var/repo:/var/repo
 
-    links:
-      - mariadb:mariadb
+    networks:
+      - phabricator_network
 
     environment:
       PHABRICATOR_BASEURI: https://example.com/
+      PHABRICATOR_STORAGE_LOCAL_DISK_PATH: /var/www/files
+      PHABRICATOR_REPO_LOCAL_DISK_PATH: /var/repo
 
       PHABRICATOR_DB_HOST: mariadb
       PHABRICATOR_DB_PORT: 3306
@@ -36,15 +42,25 @@ services:
       PHABRICATOR_DB_PASS: toor
 
   # MariaDB
-  mariadb:
+  phabricator-mariadb:
     image: mariadb
     
-    container_name: mariadb
+    container_name: phabricator-mariadb
 
     restart: always
 
     ports:
       - "3306:3306"
+    volumes:
+      - /etc/mysql/conf.d:/etc/mysql/conf.d:ro
+      - /var/lib/mysql/phabricator:/var/lib/mysql
+    volumes_from:
+      - phabricator
+
+    networks:
+      phabricator_network:
+        aliases:
+          - mariadb
 
     environment:
       MYSQL_ROOT_PASSWORD: toor
@@ -66,6 +82,10 @@ services:
 
     links:
       - phabricator:phabricator
+
+networks:
+  phabricator_network:
+    driver: bridge
 ```
 
 
@@ -122,14 +142,25 @@ server {
 --------------------------------------------------------------------------------
 
 ## Configuring
+### Volumes
+|Volume                  |Required|Comment|
+|------------------------|--------|-------|
+|**/var/www/libphutil**  |`No`    |       |
+|**/var/www/arcanist**   |`No`    |       |
+|**/var/www/phabricator**|`Yes`   |       |
+|**/var/www/files**      |`Yes`   |       |
+|**/var/repo**           |`Yes`   |       |
+
 ### Environment variables
-|Env                    |Config key          |Comment|Default      |
-|-----------------------|--------------------|-------|-------------|
-|**PHABRICATOR_BASEURI**|phabricator.base-uri|       |*null*       |
-|**PHABRICATOR_DB_HOST**|mysql.host          |       |*"localhost"*|
-|**PHABRICATOR_DB_PORT**|mysql.port          |       |*"3306"*     |
-|**PHABRICATOR_DB_USER**|mysql.user          |       |*"root"*     |
-|**PHABRICATOR_DB_PASS**|mysql.pass          |       |*""*         |
+|Env                                    |Config key                   |Comment|Default           |
+|---------------------------------------|-----------------------------|-------|------------------|
+|**PHABRICATOR_BASEURI**                |phabricator.base-uri         |       |*null*            |
+|**PHABRICATOR_STORAGE_LOCAL_DISK_PATH**|storage.local-disk.path      |       |*"/var/www/files"*|
+|**PHABRICATOR_REPO_LOCAL_DISK_PATH**   |repository.default-local-path|       |*"/var/repo"*     |
+|**PHABRICATOR_DB_HOST**                |mysql.host                   |       |*"localhost"*     |
+|**PHABRICATOR_DB_PORT**                |mysql.port                   |       |*"3306"*          |
+|**PHABRICATOR_DB_USER**                |mysql.user                   |       |*"root"*          |
+|**PHABRICATOR_DB_PASS**                |mysql.pass                   |       |*""*              |
 
 [docker-url]: //www.docker.com/
 [phabricator-url]: //phabricator.org/

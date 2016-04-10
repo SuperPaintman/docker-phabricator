@@ -43,6 +43,11 @@ RUN { \
         echo 'opcache.enable_cli=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
+RUN { \
+       echo 'post_max_size=64M'; \
+       echo 'opcache.validate_timestamps=0'; \
+    } > /usr/local/etc/php/conf.d/phabricator-recommended.ini
+
 WORKDIR /var/www/phabricator
 
 ###
@@ -63,9 +68,12 @@ ENV PHABRICATOR_DB_PASS=""
 # Volimes
 #
 # Usage:
-#   -v /etc/phabricator:/var/www/phabricator/conf
-#   -v /var/phabricator:/var/www/files
+#   -v /var/phabricator/phabricator:/var/www/phabricator
+#   -v /var/phabricator/files:/var/www/files
 #   -v /var/repo:/var/repo
+#  
+# Note:
+#   files dir must be a `chmod -R 777`
 ###
 #VOLUME /var/www/libphutil
 #VOLUME /var/www/arcanist

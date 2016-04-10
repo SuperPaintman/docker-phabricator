@@ -46,35 +46,51 @@ RUN { \
 WORKDIR /var/www/phabricator
 
 ###
-# Install Phabricator
-###
-RUN git clone git://github.com/facebook/libphutil.git /var/www/libphutil \
-    && git clone git://github.com/facebook/arcanist.git /var/www/arcanist \
-    && git clone git://github.com/facebook/phabricator.git /var/www/phabricator
-
-###
-# Expose ports
-###
-EXPOSE 9000
-EXPOSE 22
-
-###
-# Create repo dir
-###
-RUN mkdir -p /var/repo/
-VOLUME /var/repo
-
-###
 # Enviroment
 ###
 # Main
 #ENV PHABRICATOR_BASEURI="http://localhost/"
+ENV PHABRICATOR_STORAGE_LOCAL_DISK_PATH="/var/www/files"
+ENV PHABRICATOR_REPO_LOCAL_DISK_PATH="/var/repo"
 
 # Database
 ENV PHABRICATOR_DB_HOST=localhost
 ENV PHABRICATOR_DB_PORT=3306
 ENV PHABRICATOR_DB_USER=root
 ENV PHABRICATOR_DB_PASS=""
+
+###
+# Volimes
+#
+# Usage:
+#   -v /etc/phabricator:/var/www/phabricator/conf
+#   -v /var/phabricator:/var/www/files
+#   -v /var/repo:/var/repo
+###
+#VOLUME /var/www/libphutil
+#VOLUME /var/www/arcanist
+VOLUME /var/www/phabricator
+
+# Local files
+RUN mkdir -p /var/www/files
+VOLUME /var/www/files
+
+# Repo dir
+RUN mkdir -p /var/repo/
+VOLUME /var/repo
+
+###
+# Install Phabricator
+###
+RUN git clone git://github.com/facebook/libphutil.git /usr/src/phabricator/libphutil \
+    && git clone git://github.com/facebook/arcanist.git /usr/src/phabricator/arcanist \
+    && git clone git://github.com/facebook/phabricator.git /usr/src/phabricator/phabricator
+
+###
+# Expose ports
+###
+EXPOSE 9000
+EXPOSE 22
 
 ###
 # Entry point
